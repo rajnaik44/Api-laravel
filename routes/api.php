@@ -18,16 +18,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/user', function () {
-    return "hello world";
+Route::get('/test', function(){
+    p('working');
 });
 
-Route::post("/user", function ()  {
-    return response()->json("the post req hit sucessfully");
-    
-});
 
-Route::delete("/user/{id}", function ($id) {
-    return response($id, 200);
-
-});
+Route::post('user/store', 'App\Http\Controllers\api\UserController@store');

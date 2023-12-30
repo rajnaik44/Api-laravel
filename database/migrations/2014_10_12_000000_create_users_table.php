@@ -21,7 +21,7 @@ return new class extends Migration
             $table->timestamps();
             $table->string('contact')->nullable();
             $table->string('address')->nullable();
-            $table->string("pincode",6);
+            $table->string("pincode",6)->nullable();
             $table->boolean('status')->comment("1:Active, 0:InActive")->default(1);
         });
     }
