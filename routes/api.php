@@ -28,3 +28,4 @@ Route::get('/test', function(){
 Route::post('user/store', [UserController::class,'store']);
 Route::get('users/get',[UserController::class,'index']);
 Route::get('user/{id}',[UserController::class,'show']);
+Route::delete('user/delete/{id}',[UserController::class,'destroy']);

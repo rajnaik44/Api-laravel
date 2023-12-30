@@ -139,6 +139,39 @@ class UserController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+    
+        $user = User::find($id);
+        if(is_null($user)){
+            $response = [
+                'message' =>'user does not exist',
+                'status' => 0
+            ];
+            $respcode = 404;
+
+        }
+        else{
+            DB::beginTransaction();
+            try{
+                $user->delete();
+                DB::commit();
+                $response = [
+                    'message' =>'user deleted successfully',
+                    'status' => 1
+                ];
+                $respcode = 200;
+
+            }
+            catch(\Exception $err){
+                DB::rollBack();
+                $response = [
+                    'message' =>'internal server error',
+                    'status' => 0
+                ];
+                $respcode = 500;
+
+            }
+
+        }
+        return response()->json($response, $respcode);
     }
 }
