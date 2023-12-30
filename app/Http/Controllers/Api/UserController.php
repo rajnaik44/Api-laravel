@@ -16,7 +16,26 @@ class UserController extends Controller
      */
     public function index()
     {
-        //
+        $users = User::all();   
+        // p($users);
+         if(count($users)> 0){
+            //user exists
+            $response = [
+                'message' => count($users) . "users found",
+                'status' => 1,
+                'data' => $users,
+            ];
+            return response()->json($response, 200);
+
+         }else{
+            //user does not exists
+            $response = [
+                'message' => count($users) . "users found",
+                'status' => 0,
+                'data' => $users,
+            ];
+            return response()->json($response, 200);
+         }
     }
 
     /**
@@ -83,7 +102,20 @@ class UserController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $user = User::find($id );
+        if(is_null($user)){
+            $response = [
+                'message' => 'user not found',
+                'status' => 0
+            ];
+        }else{
+            $response = [
+                'message' => 'user found',
+                'status' => 1,
+                'data' => $user
+            ];
+        }
+        return response()->json($response,200);
     }
 
     /**
