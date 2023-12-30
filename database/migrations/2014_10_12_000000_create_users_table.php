@@ -19,6 +19,10 @@ return new class extends Migration
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();
+            $table->string('contact')->nullable();
+            $table->string('address')->nullable();
+            $table->string("pincode",6);
+            $table->boolean('status')->comment("1:Active, 0:InActive")->default(1);
         });
     }
 
