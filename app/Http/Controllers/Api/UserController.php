@@ -131,7 +131,54 @@ class UserController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $user = User::find($id);
+        if(is_null($user)){
+            //does not exist
+            return response()->json(
+                [
+                    'status' =>0,
+                    'message' => 'user does not exist'
+                ],404
+            );
+        }else{
+            DB::beginTransaction();
+            try{
+                $request->validate([
+                    'name' => 'required',
+                    'email' => 'required|email|unique:users,email,' . $user->id,
+                ]);
+            //user exists
+            $user->name = $request['name'];
+            $user->email = $request['email'];
+            // $user->password = bcrypt($request['password']);
+            $user->contact = $request['contact'];
+            $user->pincode = $request['pincode'];
+            $user->address = $request['address'];
+            $user->save();
+            DB::commit();
+            }
+            catch(\Exception $e){
+                DB::rollBack();
+                $user = null;
+            }
+            if(is_null($user)){
+                return response()->json(
+                    [
+                        'status'=> 0,
+                        'message'=> 'Internal server error',
+                        'e_message' => $e ->getMessage()
+                    ],500
+                );
+            }else{
+                return response()->json(
+                    [
+                        'status'=> 1,
+                        'message'=> 'user data upadted successfully'
+                    ],200
+                );
+                
+            }
+        }
     }
 
     /**
@@ -173,5 +220,74 @@ class UserController extends Controller
 
         }
         return response()->json($response, $respcode);
+    }
+
+    public function changePassword(request $request , $id){
+        $user = User::find($id);
+        if(is_null($user)){
+            //does not exist
+            return response()->json(
+                [
+                    'status' =>0,
+                    'message' => 'user does not exist'
+                ],404
+            );
+        
+    }else{
+        if($user->password == $request['old_password']){
+            //change
+            if($request['new_password'] == $request['confirm_password']){
+            //change
+            DB::beginTransaction();
+            try{
+                $request->validate([
+                    'name' => 'required',
+                    'email' => 'required|email|unique:users,email,' . $user->id,
+                ]);
+            //user exists
+            $user->password = $request['new_password'];
+            $user->save();
+            DB::commit();
+            }
+            catch(\Exception $e){
+                DB::rollBack();
+                $user = null;
+            }
+            if(is_null($user)){
+                return response()->json(
+                    [
+                        'status'=> 0,
+                        'message'=> 'Internal server error',
+                        'e_message' => $e ->getMessage()
+                    ],500
+                );
+            }else{
+                return response()->json(
+                    [
+                        'status'=> 1,
+                        'message'=> 'password upadted successfully'
+                    ],200
+                );
+                
+            }
+            }else{
+                return response()->json(
+                    [
+                        'status' =>0,
+                        'message' => 'new and confirm password does not match'
+                    ],404
+                );
+
+            }
+
+    }else{
+        //thow error
+        return response()->json(
+            [
+                'status' =>0,
+                'message' => 'old password does not match'
+            ],400
+        );
+    }
     }
 }
